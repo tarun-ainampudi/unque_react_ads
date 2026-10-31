@@ -16,7 +16,7 @@ function MetaAds({ ad }) {
       className="meta-ad"
       onClick={() => {
         if (ad.url) {
-          window.location.href = ad.url
+          window.open(ad.url)
         }
       }}
     >
@@ -35,19 +35,19 @@ function App() {
     {
       id: 'ad-0',
       image: 'https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=600',
-      url: 'https://google.com/',
+      url: 'https://github.com/tarun-ainampudi',
       title: 'Laptop Image'
     },
     {
       id: 'ad-1',
       image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600',
-      url: 'https://bing.com/',
+      url: 'https://github.com/tarun-ainampudi/unque_react_ads',
       title: 'iPhone Image'
     },
     {
       id: 'ad-2',
       image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=600',
-      url: 'https://duckduckgo.com/',
+      url: 'https://drive.google.com/file/d/1IY-lz4xGyT8LLoF2FvnMEcoZal1Z1sGA/view?usp=drive_link',
       title: 'Business'
     }
   ]
