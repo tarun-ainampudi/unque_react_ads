@@ -2,36 +2,37 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 
-function MetaAds({ ad }) {
-  if (!ad) {
+function MetaAds({ ads }) {
+  if (!ads) {
     return (
       <div className="meta-ad">
-        No available ads....
+        Loading ads....
       </div>
     )
   }
 
-  return (
-    <div
-      className="meta-ad"
-      onClick={() => {
-        if (ad.url) {
+  const display_data = []
+  const display_count = 3; 
+  const random_num = Math.floor(Math.random() * ads.length)
+  for(let i = random_num; i < random_num + display_count; i++){
+    const ad = ads[i % ads.length]
+      display_data.push(<img key={ad.id} src={ad.image} alt={ad.title} onClick={() => {
+        if(ad.url){
           window.open(ad.url)
         }
-      }}
-    >
-      <img src={ad.image} alt={ad.title} />
-      <img src={ad.image} alt={ad.title} />
-      <img src={ad.image} alt={ad.title} />
+      }}/>)
+  }
+
+  return (
+    <div className="meta-ad">
+      {display_data}
     </div>
   )
 }
 
-function App() {
-  const [ad, setAd] = useState(null)
-  const [count, setCount] = useState(0)
-
-  const ad_data = [
+// Here we fetch the data from the Meta ads api 
+function fetchAdsData(){
+    const ad_data = [
     {
       id: 'ad-0',
       image: 'https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=600',
@@ -52,21 +53,43 @@ function App() {
     }
   ]
 
+  return new Promise((resolve, reject) => {
+    if(Math.random() > 0.3){
+      return reject(new Error('Data fetch falied'))
+    }
+    setTimeout(() => {
+      resolve(ad_data)
+    }, 1500)
+  })
+}
+
+function App() {
+  const [ads, setAds] = useState(null)
+  const [count, setCount] = useState(0)
+
+
+  // Runs every 5 seconds as count updates
   useEffect(() => {
-    const ad_index = count % ad_data.length
 
-    const adTimer = setTimeout(() => {
-      setAd(ad_data[ad_index])
-    }, count === 0 ? 10000 : 0)
+    async function fetchAds(){  
+      try{
+        const ad_data = await fetchAdsData()
+        setAds(ad_data)
+      }catch (err){
+        console.log("Error: ", err.message)
+        setAds(null)
+      }
+    }
 
-    const countTimer = setTimeout(() => {
+    // Fetch only when ads are null
+    if(!ads){
+      fetchAds()
+    }
+
+    setTimeout(() => {
       setCount(prev => prev + 1)
     }, 5000)
 
-    return () => {
-      clearTimeout(adTimer)
-      clearTimeout(countTimer)
-    }
   }, [count])
 
   return (
@@ -76,7 +99,7 @@ function App() {
         <h1>UnQue React Ads</h1>
       </div>
       <div className='meta-container'>
-      <MetaAds ad={ad} />
+      <MetaAds ads={ads} />
         <div className='unque-info'>
           <p>Welcome to UnQue, a pioneering force in the service industry, initally dedicated to transforming the salon experience for both professionals and consumers. 
             We understand the challenges faced by salons and beauty service providers, and we are committed to delivering innovative solutions that enhance efficiency,
@@ -87,7 +110,7 @@ function App() {
               receive exceptional service tailored to their unique needs.
           </p>
         </div>
-      <MetaAds ad={ad} />
+      <MetaAds ads={ads} />
       </div>
     </>
   )
